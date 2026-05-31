@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 app.use(cors({
-    origin: "https://dt207-3-2-sini2500.netlify.app",
+    origin: "https://dt207g-3-sini2500.netlify.app",
 }));
 
 // anslut till databasen (Atlas) och starta appen
