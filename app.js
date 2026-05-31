@@ -11,7 +11,7 @@ app.use(cors({
     origin: "https://dt207-3-2-sini2500.netlify.app",
 }));
 
-// anslut till databasen (Atlas)
+// anslut till databasen (Atlas) och starta appen
 mongoose.connect("mongodb+srv://simnil33_db_user:xCqxUk55PF2njhsm@sini2500.pwlfyec.mongodb.net/?appName=sini2500").then(() => {
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
@@ -134,9 +134,4 @@ app.delete("/api/workexperience/:id", async (req, res) => {
       });
   }
 
-});
-
-/** kör igång server */
-app.listen(port, () => {
-  console.log('Server is running on port: ' + port);
 });
