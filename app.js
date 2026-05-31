@@ -15,7 +15,7 @@ app.use(cors({
 // anslut till databasen (Atlas) och starta appen
 mongoose.connect(process.env.MONGO_STRING).then(() => {
     app.listen(port, () => {
-        console.log(`Server running on port ${PORT}`);
+        console.log(`Server running on port ${port}`);
     });
 }).catch((error) => {
     console.log(error);
