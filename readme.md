@@ -10,7 +10,9 @@ Front-end publicerad på Netlify: https://dt207-2-2-sini2500.netlify.app
 
 För den här uppgiften skulle vi skapa ett litet API för att hantera arbetserfarenheter, för ett CV, i en databas.
 
-SQLite har använts för databasen, express för API:et och en separat front-end gjordes i ett annat git-repo.
+MongoDB har använts för databasen, Express för API:et och en separat front-end gjordes i ett annat git-repo.
+
+Tjänsten MongoDB Atlas har använts för databasen, och Mongoose för att kommunicera med den.
 
 CORS-kontroll har satts upp mellan API och front-end eftersom de är på separata domäner.
 
@@ -22,11 +24,11 @@ CORS-kontroll har satts upp mellan API och front-end eftersom de är på separat
 
 3. Kör installations-skriptet `node install.js` för att skapa databasen. 
 
-SQLite-databasen skapas med följande fält:
+Mongoose-schemat förväntar sig följande fält:
 
-|Tabell-namn|Fält  |
+|Schema-namn|Fält  |
 |--|--|
-|workexperience  | **id** (integer), **companyname** (text), **jobtitle** (text), **location** (text), **startdate** (text), **enddate** (text), **description** (text),  |
+|WorkExperience  | **companyname** (string), **jobtitle** (string), **location** (string), **startdate** (date), **enddate** (date), **description** (string),  |
 
 ## Användning
 
@@ -43,7 +45,6 @@ Nedan finns beskrivet hur man nå APIet på olika vis:
 En post returneras som JSON med följande struktur:
 ```
 {
-    "id": 2,
     "companyname": "Stugan",
     "jobtitle": "Kapten",
     "location": "Taket",
