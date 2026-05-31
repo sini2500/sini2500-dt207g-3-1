@@ -1,5 +1,5 @@
 const express = require('express');
-const sqlite3 = require("sqlite3");
+const mongoose = require("mongoose");
 const cors = require('cors');
 
 const app = express();
@@ -8,128 +8,131 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 app.use(cors({
-    origin: "https://dt207-2-2-sini2500.netlify.app",
+    origin: "https://dt207-3-2-sini2500.netlify.app",
 }));
 
-const db = new sqlite3.Database("./db/cv.db");
+// anslut till databasen (Atlas)
+mongoose.connect("mongodb+srv://simnil33_db_user:xCqxUk55PF2njhsm@sini2500.pwlfyec.mongodb.net/?appName=sini2500").then(() => {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}).catch((error) => {
+    console.log(error);
+});
+
+// schema
+const WorkExperience = require("./schema.js");
 
 /** hämta alla poster */
-app.get("/api/workexperience", (req, res) => {
+app.get("/api/workexperience", async (req, res) => {
 
-  const sql = "SELECT * FROM workexperience";
+  try {
+      const result = await WorkExperience.find();
 
-  db.all(sql, (err, rows) => {
+      res.json(result);
 
-    if (err) {
-      return res.status(500).json({
-        error: "Något gick fel"
+  } catch (error) {
+
+      res.status(500).json({
+          message: error.message
       });
-    }
-
-    res.json(rows);
-
-  });
+  }
 
 });
 
 /** hämta en post */
-app.get("/api/workexperience/:id", (req, res) => {
+app.get("/api/workexperience/:id", async (req, res) => {
 
-  const id = req.params.id;
-  const sql = "SELECT * FROM workexperience WHERE id = ?";
+  try {
 
-  db.get(sql, [id], (err, row) => {
+      const result = await WorkExperience.findById(req.params.id);
 
-    if (err) {
-      return res.status(500).json({
-        error: "Något gick fel"
+      if(!result) {
+          return res.status(404).json({
+              message: "Post hittades inte"
+          });
+      }
+
+      res.json(result);
+
+  } catch(error) {
+
+      res.status(500).json({
+          message: error.message
       });
-    }
-
-    if (!row) {
-      return res.status(404).json({
-        error: "Ingen post hittades"
-      });
-    }
-
-    res.json(row);
-
-  });
+  }
 
 });
 
 /** skapa en ny post */
-app.post("/api/workexperience", (req, res) => {
+app.post("/api/workexperience", async (req, res) => {
 
-  const { companyname, jobtitle, location, startdate, enddate, description } = req.body;
+  try {
 
-  if (!companyname || !jobtitle || !location || !startdate || !enddate || !description) {
-    return res.status(400).json({ error: "Alla fält måste finnas" });
-  }
+      const result = new WorkExperience(req.body);
 
-  const sql = "INSERT INTO workexperience(companyname, jobtitle, location, startdate, enddate, description) VALUES (?, ?, ?, ?, ?, ?)";
+      await result.save();
 
-  db.run(sql, [companyname, jobtitle, location, startdate, enddate, description], function (err) {
-
-    if (err) {
-      return res.status(500).json({
-        error: "Kunde inte skapa post"
+      res.status(201).json({
+          message: "Post skapad", result
       });
-    }
 
-    res.status(201).json({
-      message: "Post skapad",
-      id: this.lastID
-    });
+  } catch (error) {
 
-  });
+      res.status(400).json({
+          message: error.message
+      });
+  }
 
 });
 
 /** uppdatera en post */
-app.put("/api/workexperience/:id", (req, res) => {
+app.put("/api/workexperience/:id", async (req, res) => {
 
-  const id = req.params.id;
+  try {
 
-  const { companyname, jobtitle, location, startdate, enddate, description } = req.body;
+      const result = await WorkExperience.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
-  const sql = "UPDATE workexperience SET companyname = ?, jobtitle = ?, location = ?, startdate = ?, enddate = ?, description = ? WHERE id = ?";
+      if(!result) {
+          return res.status(404).json({
+              message: "Post hittades inte"
+          });
+      }
 
-  db.run(sql, [companyname, jobtitle, location, startdate, enddate, description, id], function (err) {
+      res.json(result);
 
-    if (err) {
-      return res.status(500).json({
-        error: "Kunde inte uppdatera"
+  } catch (error) {
+
+      res.status(400).json({
+          message: error.message
       });
-    }
-
-    res.json({
-      message: "Post uppdaterad"
-    });
-
-  });
+  }
 
 });
 
 /** radera en post */
-app.delete("/api/workexperience/:id", (req, res) => {
+app.delete("/api/workexperience/:id", async (req, res) => {
 
-  const id = req.params.id;
-  const sql = "DELETE FROM workexperience WHERE id = ?"
+  try {
 
-  db.run(sql, [id], function (err) {
+      const result = await WorkExperience.findByIdAndDelete(req.params.id);
 
-    if (err) {
-      return res.status(500).json({
-        error: "Kunde inte radera"
+      if(!result) {
+          return res.status(404).json({
+              message: "Post hittades inte"
+          });
+      }
+
+      res.json({
+          message: "Post raderad"
       });
-    }
 
-    res.json({
-      message: "Post raderad"
-    });
+  } catch (error) {
 
-  });
+      res.status(500).json({
+          message: error.message
+      });
+  }
 
 });
 
