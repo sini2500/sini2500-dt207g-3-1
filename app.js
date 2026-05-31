@@ -100,7 +100,10 @@ app.put("/api/workexperience/:id", async (req, res) => {
           });
       }
 
-      res.json(result);
+      res.json({
+          message: "Post uppdaterad",
+          updated: result
+      });
 
   } catch (error) {
 
