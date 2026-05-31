@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require("mongoose");
 const cors = require('cors');
+require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -12,7 +13,7 @@ app.use(cors({
 }));
 
 // anslut till databasen (Atlas) och starta appen
-mongoose.connect("mongodb+srv://simnil33_db_user:xCqxUk55PF2njhsm@sini2500.pwlfyec.mongodb.net/?appName=sini2500").then(() => {
+mongoose.connect(process.env.MONGO_STRING).then(() => {
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
     });
