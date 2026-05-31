@@ -22,8 +22,6 @@ CORS-kontroll har satts upp mellan API och front-end eftersom de är på separat
 
 2. Kör kommando `npm install` för att installera nödvändiga npm-paket
 
-3. Kör installations-skriptet `node install.js` för att skapa databasen. 
-
 Mongoose-schemat förväntar sig följande fält:
 
 |Schema-namn|Fält  |
